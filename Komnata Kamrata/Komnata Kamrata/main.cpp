@@ -18,19 +18,21 @@ struct statystyki_postaci {
 
 void start();
 void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis);
-void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkty_postaci);
-void statystyki(statystyki_postaci postac);
+void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkty_postaci, int wybor_akcji);
 void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci);
 int losowanie();
 void opis_statystyk();
 void przedmioty(statystyki_postaci& postac);
-void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double &punkty_postaci);
+void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci);
 void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci);
+void ekwipunek(statystyki_postaci postac);
+void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci, int &wybor_drzwi);
 
 const int losowych_zdarzen = 10;
 const int max_statystyki = 30;
 int punkty_ulepszen = 1;
 int klasa_postaci; //1 dla wojownika, 2 dla Ninja
+int wybor_drzwi;
 double punkty_postaci = 0;
 string klasa_postaci_napis;
 
@@ -42,7 +44,7 @@ int main() {
     tworzenie_postaci(postac, klasa_postaci_napis);
     liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //trzeba dodawac zawsze po zalozeniu przedmiotu!
     menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
-
+    
     return 0;
 }
 
@@ -95,10 +97,13 @@ void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis) 
 }
 // Naprawic zeby punkty_ulepszen zerowalo po przydzieleniu ich gdzies. 
 // Mam 1 punkt do przydzielenia, przydzielam a liczbnik sie nie resetuje i mozna w nieskonczonosc przydzielac.
-void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkty_postaci) {
+void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkty_postaci, int wybor_akcji) {
     int wybor_statystyki;
+    system("cls");
     cout << "\n\t1.Sila\t\t2.Zycie\t\t3.Zrecznosc";
-    cout << "\n\t     Masz " << punkty_ulepszen << " punkt(y) do przydzielenia!\n\nWybierz numer statystyki by przydzielic : ";
+    cout << "\n\t     Masz " << punkty_ulepszen << " punkt(y) do przydzielenia!";
+    cout << "\n\n( By wrocic do menu, wybierz 0 )";
+    cout << "\nWybierz numer statystyki by przydzielic : ";
     cin >> wybor_statystyki;
     switch (wybor_statystyki) {
     case 1: {
@@ -116,16 +121,12 @@ void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkt
         cout << "\nPomyslnie zwiekszono zwinnosc!\n\tAktualnie : " << postac.zwinnosc;
         break;
     }
+    case 0: {
+        break;
+    }
     }
     liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //aktualizacja punktow po dodaniu punktow
     system("cls");
-}
-void statystyki(statystyki_postaci postac) {
-    system("cls");
-    cout << "\n     Aktualne statystyki :";
-    cout << "\n\t1. Sila : " << postac.sila;
-    cout << "\n\t2. Zycie : " << postac.hp;
-    cout << "\n\t3. Zwinnosc : " << postac.zwinnosc;
 }
 void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci) {
     do {
@@ -140,8 +141,7 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
         cout << "\n\n   Co chcesz zrobic : \n";
         cout << "\n   1. Rusz na PRZYGODE ! (nie dziala jeszcze) ";
         cout << "\n   2. Zwieksz statystyki ";
-        cout << "\n   3. Opis statystyk";
-        cout << "\n   4. Opis liczenia punktow";
+        cout << "\n   3. O grze";
         cout << "\n   0. Koniec programu";
         cout << "\n   \tWybor: ";
         cin >> wybor_akcji;
@@ -149,28 +149,63 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
         switch (wybor_akcji) {
         case 1: {
             system("cls");
-            for (int i = 1; i < 10; i++) {
-                cout << "\nP r  Z yYyY  G  ooOo D   a";
-                Sleep(150);
-            }
+            rysuj_drzwi(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci, wybor_drzwi);
             break;
         }
         case 2: {
-            postac_upgrade(postac, klasa_postaci, punkty_postaci);
+            postac_upgrade(postac, klasa_postaci, punkty_postaci, wybor_akcji);
             break;
         }
         case 3: {
-            opis_statystyk();
+            system("cls");
+            cout << "\n  * ======================================================= *";
+            cout << "\n  I                  # Komnata Kamrata #                    I";
+            cout << "\n  I                                                         I";
+            cout << "\n  I\tSila: " << postac.sila << "\t\tHP: " << postac.hp << "\t\tZrecznosc: " << postac.zwinnosc << "        I";
+            cout << "\n  I                                                         I";
+            cout << "\n                       " << klasa_postaci_napis << " " << postac.imie;
+            cout << "\n                     " << "Punkty postaci: " << punkty_postaci;
+            cout << "\n  * ======================================================= *";
+            cout << "\n   1. Opis statystyk";
+            cout << "\n   2. Opis liczenia punktow";
+            cout << "\n   3. O co chodzi w grze?";
+            cout << "\n   0. Powrot";
+            cout << "Wybor : ";
+            int w = 0;
+            cin >> w;
+            switch (w) {
+            case 1: {
+                opis_statystyk();
+                break;
+            }
+            case 2: {
+                opis_liczenia_punktow(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
+                break;
+            }
+            case 3: {
+                system("cls");
+                cout << "Opis gry Opis gry Opis gry\n";
+                cout << "Opis gry Opis gry Opis gry\n";
+                cout << "Opis gry Opis gry Opis gry\n";
+                cout << "Opis gry Opis gry Opis gry\n";
+                cout << "Opis gry Opis gry Opis gry\n";
+                cout << "Opis gry Opis gry Opis gry\n";
+
+                break;
+            }
+            case 0: {
+                menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
+            }
+            }
+        }
+        case 0: {
             break;
         }
-        case 4: {
-            opis_liczenia_punktow(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
-            break;
         }
-        }
+
     } while (wybor_akcji != 0);
 }
-int losowanie() { 
+int losowanie() {
     int losowa_liczba = rand() % losowych_zdarzen + 1;
     return losowa_liczba;
 
@@ -194,6 +229,7 @@ void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, doub
         punkty_postaci = 1 * postac.sila + 3 * postac.zwinnosc + 1 * postac.hp;
     }
 }
+//zarys przedmiotow, jeszcze brak funkcjonalnosci
 void przedmioty(statystyki_postaci& postac) {
     int a = 1; //tymczasowe
     if (a == 2) //helm1
@@ -254,4 +290,40 @@ void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string kl
     cout << "\n  I                     Ninja otrzymuje bonus za zrecznosc                      I";
     cout << "\n  * =========================================================================== *";
     menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
+}
+void ekwipunek(statystyki_postaci postac) {
+    cout << "\nHelm";
+    cout << "\nZbroja";
+    cout << "\nButy";
+    cout << "\nMiecz";
+}
+void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci, int &wybor_drzwi) {
+    cout << "\t#########    \t#########\n";   
+    cout << "\t#  ___  #    \t#  ___  #\n";
+    cout << "\t#  |1|  #    \t#  |2|  #\n";
+    cout << "\t#       #    \t#       #\n";
+    cout << "\t#-      #    \t#-      #\n";
+    cout << "\t#       #    \t#       #\n";
+    cout << "\t#       #    \t#       #\n\n";
+    cout << "( By wrocic do menu, wpisz 0 )\n";
+    cout << "   Ktore drzwi wybierasz? :";
+    cin >> wybor_drzwi;
+
+    switch (wybor_drzwi) {
+    case 1: {
+        system("cls");
+        cout << "\tWybrano drzwi numer 1";
+        break;
+        }
+    case 2: {
+        system("cls");
+        cout << "\tWybrano drzwi numer 2";
+        break;
+    }
+    case 0: {
+        system("cls");
+        menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
+        break;
+    }
+    }
 }
