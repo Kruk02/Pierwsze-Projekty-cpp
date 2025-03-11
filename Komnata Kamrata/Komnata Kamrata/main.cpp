@@ -3,6 +3,7 @@
 #include <time.h>
 #include <vector>
 #include <string>
+#include <windows.h>
 using namespace std;
 struct statystyki_postaci {
     string imie;
@@ -17,17 +18,18 @@ struct statystyki_postaci {
 
 void start();
 void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis);
-void postac_upgrade(statystyki_postaci& postac);
+void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkty_postaci);
 void statystyki(statystyki_postaci postac);
 void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci);
 int losowanie();
 void opis_statystyk();
 void przedmioty(statystyki_postaci& postac);
 void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double &punkty_postaci);
+void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci);
 
 const int losowych_zdarzen = 10;
 const int max_statystyki = 30;
-int punkty_ulepszen = 0;
+int punkty_ulepszen = 1;
 int klasa_postaci; //1 dla wojownika, 2 dla Ninja
 double punkty_postaci = 0;
 string klasa_postaci_napis;
@@ -36,16 +38,10 @@ int main() {
     srand(time(0));
     statystyki_postaci postac;
     int wybor_akcji{};
-    cout << losowanie() << endl;
-    cout << losowanie() << endl;
-    cout << losowanie() << endl;
-    cout << losowanie() << endl;
-    cout << losowanie() << endl;
-    cout << losowanie() << endl;
-   //start();
-    //tworzenie_postaci(postac, klasa_postaci_napis);
-    //liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci);
-    //menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
+    start();
+    tworzenie_postaci(postac, klasa_postaci_napis);
+    liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //trzeba dodawac zawsze po zalozeniu przedmiotu!
+    menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
 
     return 0;
 }
@@ -97,7 +93,9 @@ void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis) 
     }
     system("cls");
 }
-void postac_upgrade(statystyki_postaci& postac) {
+// Naprawic zeby punkty_ulepszen zerowalo po przydzieleniu ich gdzies. 
+// Mam 1 punkt do przydzielenia, przydzielam a liczbnik sie nie resetuje i mozna w nieskonczonosc przydzielac.
+void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkty_postaci) {
     int wybor_statystyki;
     cout << "\n\t1.Sila\t\t2.Zycie\t\t3.Zrecznosc";
     cout << "\n\t     Masz " << punkty_ulepszen << " punkt(y) do przydzielenia!\n\nWybierz numer statystyki by przydzielic : ";
@@ -119,6 +117,7 @@ void postac_upgrade(statystyki_postaci& postac) {
         break;
     }
     }
+    liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //aktualizacja punktow po dodaniu punktow
     system("cls");
 }
 void statystyki(statystyki_postaci postac) {
@@ -130,54 +129,62 @@ void statystyki(statystyki_postaci postac) {
 }
 void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci) {
     do {
-        cout << "\n* ======================================================= *";
-        cout << "\nI                  # Komnata Kamrata #                    I";
-        cout << "\nI                                                         I";
-        cout << "\nI\tSila: " << postac.sila << "\t\tHP: " << postac.hp << "\t\tZrecznosc: " << postac.zwinnosc << "      I";
-        cout << "\nI                                                         I";
-        cout << "\n                     " << klasa_postaci_napis << " " << postac.imie;
-        cout << "\n                   " << "Punkty postaci: " << punkty_postaci;
-        cout << "\n* ======================================================= *";
-        cout << "\n\nCo chcesz zrobic : \n";
-        cout << "\n1. Rusz na PRZYGODE ! (nie dziala jeszcze) ";
-        cout << "\n2. Zwieksz statystyki ";
-        cout << "\n3. Opis statystyk";
-        cout << "\n0. Koniec programu";
-        cout << "\n\tWybor: ";
+        cout << "\n  * ======================================================= *";
+        cout << "\n  I                  # Komnata Kamrata #                    I";
+        cout << "\n  I                                                         I";
+        cout << "\n  I\tSila: " << postac.sila << "\t\tHP: " << postac.hp << "\t\tZrecznosc: " << postac.zwinnosc << "        I";
+        cout << "\n  I                                                         I";
+        cout << "\n                       " << klasa_postaci_napis << " " << postac.imie;
+        cout << "\n                     " << "Punkty postaci: " << punkty_postaci;
+        cout << "\n  * ======================================================= *";
+        cout << "\n\n   Co chcesz zrobic : \n";
+        cout << "\n   1. Rusz na PRZYGODE ! (nie dziala jeszcze) ";
+        cout << "\n   2. Zwieksz statystyki ";
+        cout << "\n   3. Opis statystyk";
+        cout << "\n   4. Opis liczenia punktow";
+        cout << "\n   0. Koniec programu";
+        cout << "\n   \tWybor: ";
         cin >> wybor_akcji;
 
         switch (wybor_akcji) {
         case 1: {
-            cout << "Przygoda";
+            system("cls");
+            for (int i = 1; i < 10; i++) {
+                cout << "\nP r  Z yYyY  G  ooOo D   a";
+                Sleep(150);
+            }
             break;
         }
         case 2: {
-            postac_upgrade(postac);
+            postac_upgrade(postac, klasa_postaci, punkty_postaci);
             break;
         }
         case 3: {
             opis_statystyk();
             break;
         }
+        case 4: {
+            opis_liczenia_punktow(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
+            break;
+        }
         }
     } while (wybor_akcji != 0);
 }
-//dokonczyc losowanie
 int losowanie() { 
-    int losowa_liczba = rand() % losowych_zdarzen;
+    int losowa_liczba = rand() % losowych_zdarzen + 1;
     return losowa_liczba;
 
 }
 void opis_statystyk() {
     system("cls");
-    cout << "\n* =========================================================================== *";
-    cout << "\nI          Kazda statystyka (oprocz HP) przyczynia sie do obrazen!            I";
-    cout << "\nI                                                                             I";
-    cout << "\nI             Sila to mnoznik obrazen (obrazenia bazowe * sila)               I";
-    cout << "\nI  Zrecznosc zmniejsza otrzymywane obrazenia (za kazdy punkt sa 10% mniejsze) I";
-    cout << "\nI               ******  Kup przedmiot by odblokowac  ******                   I";
-    cout << "\nI               ******  Kup przedmiot by odblokowac  ******                   I";
-    cout << "\n* =========================================================================== *\n\n";
+    cout << "\n  * =========================================================================== *";
+    cout << "\n  I          Kazda statystyka (oprocz HP) przyczynia sie do obrazen!            I";
+    cout << "\n  I                                                                             I";
+    cout << "\n  I             Sila to mnoznik obrazen (obrazenia bazowe * sila)               I";
+    cout << "\n  I  Zrecznosc zmniejsza otrzymywane obrazenia (za kazdy punkt sa 10% mniejsze) I";
+    cout << "\n  I               ******  Kup przedmiot by odblokowac  ******                   I";
+    cout << "\n  I               ******  Kup przedmiot by odblokowac  ******                   I";
+    cout << "\n  * =========================================================================== *\n\n";
 }
 void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci) {
     if (klasa_postaci == 1) { //wojownik
@@ -235,4 +242,16 @@ void przedmioty(statystyki_postaci& postac) {
         postac.sila += 3;
         postac.zwinnosc -= 1;
     }
+}
+void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci) {
+    system("cls");
+    cout << "\n  * =========================================================================== *";
+    cout << "\n  I                      Sposob liczenia punktow postaci                        I";
+    cout << "\n  I                                                                             I";
+    cout << "\n  I            Kazda klasa otrzymuje inne bonusu ze swoich statystyk            I";
+    cout << "\n  I                                                                             I";
+    cout << "\n  I                   Wojownik otrzymuje bonus za sile i HP                     I";
+    cout << "\n  I                     Ninja otrzymuje bonus za zrecznosc                      I";
+    cout << "\n  * =========================================================================== *";
+    menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
 }
