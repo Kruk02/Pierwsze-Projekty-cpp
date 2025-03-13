@@ -17,6 +17,12 @@ struct statystyki_postaci {
     string buty = "Brak";
     string bron = "Brak";
 };
+struct statystyki_przeciwnika {
+    string imie = "Stefam Krzywoustny";
+    int sila = 1;
+    int hp = 1;
+    int zwinnosc = 1;
+};
 
 void start();
 void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis);
@@ -25,32 +31,36 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
 int losowanie();
 void opis_statystyk();
 void przedmioty(statystyki_postaci& postac);
-void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci);
+void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci, statystyki_przeciwnika enemy, double& punkty_przeciwnika);
 void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci);
 void ekwipunek(statystyki_postaci postac);
 void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci, int& wybor_drzwi);
-void ulecz(statystyki_postaci postac);
-void plus_sila(statystyki_postaci postac);
-void plus_zwinnosc(statystyki_postaci postac);
+void ulecz(statystyki_postaci &postac);
+void plus_sila(statystyki_postaci &postac);
+void plus_zwinnosc(statystyki_postaci &postac);
+void przeciwnik(struct statystyki_przeciwnika przeciwnik);
 
 const int losowych_zdarzen = 10;
 const int max_statystyki = 30;
 int punkty_ulepszen = 1;
 int klasa_postaci = 0; //1 dla wojownika, 2 dla Ninja
 int wybor_drzwi;
+int wybor_akcji{};
 double punkty_postaci = 0;
+double punkty_przeciwnika = 0;
 string klasa_postaci_napis = "Bezimienny";
+statystyki_postaci postac;
+statystyki_przeciwnika enemy;
 
 int main() {
     setlocale(LC_ALL, "pl_PL");
     srand(time(0));
-    statystyki_postaci postac;
-    int wybor_akcji{};
-    //start();
-    //tworzenie_postaci(postac, klasa_postaci_napis);
+
+    start();
+    tworzenie_postaci(postac, klasa_postaci_napis);
     liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //trzeba dodawac zawsze po zalozeniu przedmiotu!
     menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
-
+   
     return 0;
 }
 
@@ -133,7 +143,7 @@ void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, double& punkt
         break;
     }
     }
-    liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //aktualizacja punktow po dodaniu punktow
+    liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci, enemy, punkty_przeciwnika); //aktualizacja punktow po dodaniu punktow
     system("cls");
 }
 void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci) {
@@ -239,7 +249,7 @@ void opis_statystyk() {
     cout << "\n  I               ******  Kup przedmiot by odblokowac  ******                   I";
     cout << "\n  * =========================================================================== *\n\n";
 }
-void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci) {
+void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci, statystyki_przeciwnika enemy, double& punkty_przeciwnika) {
     if (klasa_postaci == 0) { //default
         punkty_postaci = 1 * postac.sila + 1 * postac.zwinnosc + 1 * postac.hp;
     }
@@ -249,7 +259,10 @@ void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, doub
     if (klasa_postaci == 2) { //ninja
         punkty_postaci = 1 * postac.sila + 3 * postac.zwinnosc + 1 * postac.hp;
     }
+    //liczenie punktow przeciwnika
+    punkty_przeciwnika = 1 * enemy.sila + 1 * enemy.zwinnosc + 1 * enemy.hp;
 }
+
 //zarys przedmiotow, jeszcze brak funkcjonalnosci
 void przedmioty(statystyki_postaci& postac) {
     int a = 1; //tymczasowe
@@ -313,10 +326,10 @@ void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string kl
     menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
 }
 void ekwipunek(statystyki_postaci postac) {
-    cout << "\nHełm : " << postac.helm;
-    cout << "\nZbroja : " << postac.zbroja;
-    cout << "\nButy : " << postac.buty;
-    cout << "\nBroń : " << postac.bron;
+    cout << "\nHełm : " << "\t\t" << postac.helm;
+    cout << "\nZbroja : " << "\t" << postac.zbroja;
+    cout << "\nButy : " << "\t\t" << postac.buty;
+    cout << "\nBroń : " << "\t\t" << postac.bron;
 }
 void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci, int& wybor_drzwi) {
     cout << "\t#########    \t#########\n";
@@ -348,12 +361,70 @@ void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postac
     }
     }
 }
-void ulecz(statystyki_postaci postac) {
+void ulecz(statystyki_postaci &postac) {
     postac.hp = +5;
 }
-void plus_sila(statystyki_postaci postac) {
+void plus_sila(statystyki_postaci &postac) {
     postac.sila += 3;
 }
-void plus_zwinnosc(statystyki_postaci postac) {
+void plus_zwinnosc(statystyki_postaci &postac) {
     postac.zwinnosc += 3;
 }
+
+//statystyki przeciwnikow sa balansu, narazie przykladowe
+void przeciwnik(struct statystyki_przeciwnika przeciwnik) {
+    int losowanie = rand() % 4 + 1;
+    int wylosowany_przeciwnik = losowanie;
+    cout << "Wylosowano " << wylosowany_przeciwnik;
+
+    switch (losowanie) {
+    case 1: {
+        enemy.imie = "\nPrzeciwnik 1, slaby";
+        enemy.hp = 1;
+        enemy.sila = 1;
+        enemy.zwinnosc = 1;
+        cout << "\nStatystyki przeciwnika : \n";
+        cout << "Sila : " << enemy.sila << endl;
+        cout << "Życie : " << enemy.hp << endl;
+        cout << "Zwinność : " << enemy.zwinnosc << endl << endl;
+        break;
+
+        }
+    case 2: {
+        enemy.imie = "\nPrzeciwnik 2, sredni";
+        enemy.hp = 2;
+        enemy.sila = 2;
+        enemy.zwinnosc = 2;
+        cout << "\nStatystyki przeciwnika : \n";
+        cout << "Sila : " << enemy.sila << endl;
+        cout << "Życie : " << enemy.hp << endl;
+        cout << "Zwinność : " << enemy.zwinnosc << endl << endl;
+        break;
+
+        }
+    case 3: {
+        enemy.imie = "\nPrzeciwnik 3, silny";
+        enemy.hp = 3;
+        enemy.sila = 3;
+        enemy.zwinnosc = 3;
+        cout << "\nStatystyki przeciwnika : \n" << endl;
+        cout << "Sila : " << enemy.sila << endl;
+        cout << "Życie : " << enemy.hp << endl;
+        cout << "Zwinność : " << enemy.zwinnosc << endl << endl;
+        break;
+
+    }
+    case 4: {
+        enemy.imie = "\nPrzeciwnik 4, ciezkie sie wylosowalo, bos";
+        enemy.hp = 4;
+        enemy.sila = 4;
+        enemy.zwinnosc = 4;
+        cout << "\nStatystyki przeciwnika : \n" << endl;
+        cout << "Sila : " << enemy.sila << endl;
+        cout << "Życie : " << enemy.hp << endl;
+        cout << "Zwinność : " << enemy.zwinnosc << endl << endl;
+        break;
+
+    }
+    } // switch
+}// funkcja
