@@ -17,12 +17,6 @@ struct statystyki_postaci {
     string buty = "Brak";
     string bron = "Brak";
 };
-struct statystyki_przeciwnika {
-    string imie = "Stefam Krzywoustny";
-    int sila = 1;
-    int hp = 1;
-    int zwinnosc = 1;
-};
 
 void start();
 void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis);
@@ -31,14 +25,15 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
 int losowanie();
 void opis_statystyk();
 void przedmioty(statystyki_postaci& postac);
-void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci, statystyki_przeciwnika enemy, double& punkty_przeciwnika);
+void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci, statystyki_postaci enemy, double& punkty_przeciwnika);
 void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci);
 void ekwipunek(statystyki_postaci postac);
 void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, double punkty_postaci, int& wybor_drzwi);
 void ulecz(statystyki_postaci &postac);
 void plus_sila(statystyki_postaci &postac);
 void plus_zwinnosc(statystyki_postaci &postac);
-void przeciwnik(struct statystyki_przeciwnika przeciwnik);
+void przeciwnik(struct statystyki_postaci &enemy);
+void walka(statystyki_postaci postac, statystyki_postaci enemy, int punkty_postaci, int punkty_przeciwnika);
 
 const int losowych_zdarzen = 10;
 const int max_statystyki = 30;
@@ -50,7 +45,7 @@ double punkty_postaci = 0;
 double punkty_przeciwnika = 0;
 string klasa_postaci_napis = "Bezimienny";
 statystyki_postaci postac;
-statystyki_przeciwnika enemy;
+statystyki_postaci enemy;
 
 int main() {
     setlocale(LC_ALL, "pl_PL");
@@ -58,7 +53,7 @@ int main() {
 
     start();
     tworzenie_postaci(postac, klasa_postaci_napis);
-    liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci); //trzeba dodawac zawsze po zalozeniu przedmiotu!
+    liczenie_punktow_postaci(postac, klasa_postaci, punkty_postaci, enemy, punkty_przeciwnika); //trzeba dodawac zawsze po zalozeniu przedmiotu!
     menu(postac, wybor_akcji, klasa_postaci_napis, punkty_postaci);
    
     return 0;
@@ -249,7 +244,7 @@ void opis_statystyk() {
     cout << "\n  I               ******  Kup przedmiot by odblokowac  ******                   I";
     cout << "\n  * =========================================================================== *\n\n";
 }
-void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci, statystyki_przeciwnika enemy, double& punkty_przeciwnika) {
+void liczenie_punktow_postaci(statystyki_postaci postac, int klasa_postaci, double& punkty_postaci, statystyki_postaci enemy, double& punkty_przeciwnika) {
     if (klasa_postaci == 0) { //default
         punkty_postaci = 1 * postac.sila + 1 * postac.zwinnosc + 1 * postac.hp;
     }
@@ -372,7 +367,7 @@ void plus_zwinnosc(statystyki_postaci &postac) {
 }
 
 //statystyki przeciwnikow sa balansu, narazie przykladowe
-void przeciwnik(struct statystyki_przeciwnika przeciwnik) {
+void przeciwnik(struct statystyki_postaci &enemy) {
     int losowanie = rand() % 4 + 1;
     int wylosowany_przeciwnik = losowanie;
     cout << "Wylosowano " << wylosowany_przeciwnik;
@@ -428,3 +423,16 @@ void przeciwnik(struct statystyki_przeciwnika przeciwnik) {
     }
     } // switch
 }// funkcja
+void walka(statystyki_postaci postac, statystyki_postaci enemy, int punkty_postaci, int punkty_przeciwnika) {
+    //porownanie punktow
+    if (punkty_postaci < punkty_przeciwnika) {
+        cout << "Przegrywasz, koniec gry";
+    }
+    if (punkty_postaci > punkty_przeciwnika) {
+        cout << "Wygrywasz walke";
+
+    }
+    if (punkty_postaci == punkty_przeciwnika) {
+        cout << "Remis, kazdy odszedl w swoja strone";
+    }
+}
