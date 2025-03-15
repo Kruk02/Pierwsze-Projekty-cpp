@@ -51,7 +51,7 @@ statystyki_postaci enemy;
 int main() {
     setlocale(LC_ALL, "pl_PL");
     srand(time(0));
-    //start();
+    start();
     tworzenie_postaci(postac, klasa_postaci_napis);
     liczenie_punktow_postaci(postac, klasa_postaci); //trzeba dodawac zawsze po zalozeniu przedmiotu!
     menu(postac, wybor_akcji, klasa_postaci_napis);
@@ -243,7 +243,7 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
                 cout << "Opis gry Opis gry Opis gry\n";
                 cout << "Opis gry Opis gry Opis gry\n";
                 cout << "Opis gry Opis gry Opis gry\n";
-
+                menu(postac, wybor_akcji, klasa_postaci_napis);
                 break;
             }
             case 4: {
@@ -253,6 +253,7 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
                 cout << "\n 1. Średni - 30%";
                 cout << "\n 1. Trudny - 20%";
                 cout << "\n 1. Boss - 20%";
+                menu(postac, wybor_akcji, klasa_postaci_napis);
                 break;
             }
             case 0: {
@@ -367,7 +368,7 @@ void ekwipunek(statystyki_postaci postac) {
     cout << "\nBroń : " << "\t\t" << postac.bron;
 }
 void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, int& wybor_drzwi) {
-    cout << "\nPokuj nr. " << odwiedzone_pokoje + 1;
+    cout << "\nPokój nr. " << odwiedzone_pokoje + 1;
     cout << "\n\t#########    \t#########\n";
     cout << "\t#  ___  #    \t#  ___  #\n";
     cout << "\t#  |1|  #    \t#  |2|  #\n";
@@ -620,12 +621,13 @@ int koniec_gry() {
     cout << "\n        Niestety to twój koniec gry !";
     cout << "\n\n               Statystyki:";
     cout << "\n          Zdobyte punkty : " << postac.punkty << " !";
-    cout << "\n\           Pokonwni wrogowie: " << pokonani_wrogowie << " !";
+    cout << "\n\           Pokonani wrogowie: " << pokonani_wrogowie << " !";
     cout << "\n           Odwiedzone pokoje : "<< odwiedzone_pokoje << " !";
     cout << "\n          Otworzone skrzynki : "<< otwarte_skrzynki << " !";
-    cout << "\n\n           Sproboj jeszcze raz !";
+    cout << "\n\n           Spróbuj jeszcze raz !";
+
     cout << "\n=============================================";
-    cout << "\n\nWcisnij dowolny klawisz by kontynuuowac...";
+    cout << "\n\nWciśnij dowolny klawisz by kontynuować...";
     _getch();
     return 0;
 }
