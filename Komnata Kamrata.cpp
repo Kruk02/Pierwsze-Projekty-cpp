@@ -24,7 +24,6 @@ void start();
 void tworzenie_postaci(statystyki_postaci& postac, string& klasa_postaci_napis);
 void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, int wybor_akcji);
 void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis);
-int losowanie();
 void opis_statystyk();
 void przedmioty(statystyki_postaci& postac);
 void liczenie_punktow_postaci(statystyki_postaci& postac, int klasa_postaci);
@@ -44,6 +43,7 @@ int wybor_drzwi;
 int wybor_akcji{};
 int pokonani_wrogowie = 0;
 int odwiedzone_pokoje = 0;
+int otwarte_skrzynki = 0;
 string klasa_postaci_napis = "Bezimienny";
 statystyki_postaci postac;
 statystyki_postaci enemy;
@@ -120,30 +120,44 @@ void postac_upgrade(statystyki_postaci& postac, int klasa_postaci, int wybor_akc
     switch (wybor_statystyki) {
     case 1: {
         if (punkty_ulepszen > 0) {
-            postac.sila += 1;
-            punkty_ulepszen -= 1;
-            cout << "\nPomyslnie zwiększono siłe!\n\tAktualnie : " << postac.sila;
+            postac.sila++;
+            punkty_ulepszen--;
+            cout << "Pomyslnie ulepszono sile";
         }
+        else cout << "Nie masz punktow";
         break;
     }
+
     case 2: {
-        postac.hp += punkty_ulepszen;
-        cout << "\nPomyslnie zwiększono życie!\n\tAktualnie : " << postac.hp;
-        punkty_ulepszen -= 1;
+        if (punkty_ulepszen > 0) {
+            postac.hp++;
+            punkty_ulepszen--;
+            cout << "Pomyslnie ulepszono życie";
+        }
+        else cout << "Nie masz punktow";
         break;
     }
+
     case 3: {
-        postac.zwinnosc += punkty_ulepszen;
-        cout << "\nPomyślnie zwiększono zwinność!\n\tAktualnie : " << postac.zwinnosc;
-        punkty_ulepszen -= 1;
+        if (punkty_ulepszen > 0) {
+            postac.zwinnosc++;
+            punkty_ulepszen--;
+            cout << "Pomyslnie ulepszono zwinnosc";
+        }
+        else cout << "Nie masz punktow";
         break;
     }
+
     case 4: {
-        postac.kryt += (0.1 * punkty_ulepszen);
-        cout << "\nPomyślnie zwiększono obrazenia krytyczne!\n\tAktualnie : " << postac.kryt;
-        punkty_ulepszen -= 1;
+        if (punkty_ulepszen > 0) {
+            postac.kryt++;
+            punkty_ulepszen--;
+            cout << "Pomyslnie ulepszono kryta";
+        }
+        else cout << "Nie masz punktow";
         break;
     }
+
     case 0: {
         break;
     }
@@ -250,11 +264,7 @@ void menu(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis
 
     } while (wybor_akcji != 0);
 }
-int losowanie() {
-    int losowa_liczba = rand() % losowych_zdarzen + 1;
-    return losowa_liczba;
 
-}
 void opis_statystyk() {
     system("cls");
     cout << "\n  * =========================================================================== *";
@@ -384,7 +394,7 @@ void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postac
     }
 }
 
-//statystyki przeciwnikow sa balansu, narazie przykladowe
+//statystyki przeciwnikow do balansu, narazie przykladowe
 void przeciwnik(struct statystyki_postaci& postac, struct statystyki_postaci& enemy) {
     int losowanie = rand() % 10 + 1;
     int wylosowany_przeciwnik = losowanie;
@@ -569,8 +579,9 @@ void przeciwnik(struct statystyki_postaci& postac, struct statystyki_postaci& en
     }
     } // switch
 }// funkcja
+//zrobic bardziej realistyczna walke, turowa czy cos
 void walka(statystyki_postaci &postac, statystyki_postaci enemy) {
-    if (postac.punkty < enemy.punkty) {
+    if (postac.hp < enemy.sila) {
         Sleep(1000);
         cout << "\nPrzegrywasz, koniec gry";
         cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
@@ -579,6 +590,7 @@ void walka(statystyki_postaci &postac, statystyki_postaci enemy) {
     }
     if (postac.punkty > enemy.punkty and postac.hp > enemy.sila) {
         Sleep(1000);
+        pokonani_wrogowie++;
         cout << "\nWygrywasz walke";
         postac.hp = postac.hp - enemy.sila;
         cout << "\nZdobywasz punkt(y) ulepszen"; // pozniej zrobic jakies poziomy, typu lvl to 100exp i kazdy potwor daje inna ilosc expa, jeden caly poziom to jeden punkt 
@@ -588,7 +600,7 @@ void walka(statystyki_postaci &postac, statystyki_postaci enemy) {
         system("cls");
         menu(postac, wybor_akcji, klasa_postaci_napis);
     }
-    if (postac.punkty == enemy.punkty) {
+    if (postac.punkty == enemy.punkty or (postac.hp == enemy.sila and enemy.hp == postac.sila) ) {
         Sleep(1000);
         cout << "\nRemis, kazdy odszedl w swoja strone";
         cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
@@ -600,9 +612,11 @@ int koniec_gry(statystyki_postaci postac, int pokonani_wrogowie) {
     system("cls");
     cout << "\n=============================================";
     cout << "\n\tNiestety to twój koniec gry !";
+    cout << "\n\t                Statystyki:";
     cout << "\n\t    Zdobyl*ś " << postac.punkty << " punktow !";
     cout << "\n\t    Pokonal*ś " << pokonani_wrogowie << " wrogów !";
     cout << "\n\t    Odwiedzi*ś "<< odwiedzone_pokoje << " pokoi !";
+    cout << "\n\t    Otworzone skrzynki "<< otwarte_skrzynki << " !";
     cout << "\n\n\t    Sproboj jeszcze raz !";
     cout << "\n=============================================";
     cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
@@ -649,6 +663,7 @@ void przygoda(statystyki_postaci &postac, statystyki_postaci enemy) {
         Sleep(2000);
         punkty_ulepszen += 1;
         cout << "\n " << postac.imie << "znajduje 1pkt ulepszen !";
+        otwarte_skrzynki++;
         break;
     }
     case 9: {
@@ -659,6 +674,7 @@ void przygoda(statystyki_postaci &postac, statystyki_postaci enemy) {
         Sleep(2000);
         punkty_ulepszen += 2;
         cout << "\n " << postac.imie << "znajduje 2pkt ulepszen !";
+        otwarte_skrzynki++;
         break;
     }
     case 10: {
@@ -669,6 +685,7 @@ void przygoda(statystyki_postaci &postac, statystyki_postaci enemy) {
         Sleep(2000);
         punkty_ulepszen += 3;
         cout << "\n " << postac.imie << "znajduje 3pkt ulepszen !";
+        otwarte_skrzynki++;
         break;
     }
 
