@@ -723,6 +723,7 @@ void tabelka(statystyki_postaci &postac, statystyki_postaci& enemy) {
     cout << "\n\tZręczność" << "\t" << postac.zrecznosc << "\t\t" << enemy.zrecznosc;
     cout << "\n\tKryt" << "\t\t" << postac.kryt << "\t\t" << enemy.kryt << endl;
     cout << "\n\tPunkty" << "\t\t" << postac.punkty << "\t\t" << enemy.punkty << endl;
+    liczenie_punktow_postaci(postac, klasa_postaci)
 }
 int koniec_gry() {
     system("cls");
