@@ -31,7 +31,7 @@ void opis_liczenia_punktow(statystyki_postaci postac, int wybor_akcji, string kl
 void ekwipunek(statystyki_postaci postac);
 void rysuj_drzwi(statystyki_postaci postac, int wybor_akcji, string klasa_postaci_napis, int& wybor_drzwi);
 void przeciwnik(struct statystyki_postaci& postac, struct statystyki_postaci& enemy);
-void walka(statystyki_postaci &postac, statystyki_postaci &enemy);
+void walka(statystyki_postaci& postac, statystyki_postaci& enemy);
 int koniec_gry();
 void przygoda(statystyki_postaci& postac, statystyki_postaci enemy);
 void tabelka(statystyki_postaci& postac, statystyki_postaci& enemy);
@@ -458,7 +458,7 @@ void przeciwnik(struct statystyki_postaci& postac, struct statystyki_postaci& en
         walka(postac, enemy);
         break;
 
-    }    
+    }
     case 5: {
         enemy.imie = "Przeciwnik 2, sredni";
         enemy.hp = 2;
@@ -530,125 +530,125 @@ void przeciwnik(struct statystyki_postaci& postac, struct statystyki_postaci& en
     }
     } // switch
 }// funkcja
-void walka(statystyki_postaci &postac, statystyki_postaci &enemy) {
+void walka(statystyki_postaci& postac, statystyki_postaci& enemy) {
     int losowe = rand() % 2 + 1;
     int postac_win = 0;
     int enemy_win = 0;
     int runda = 1;
-        switch (losowe) {
-        case 1: {
-            cout << "Runda : " << runda << endl;
-            Sleep(500);
+    switch (losowe) {
+    case 1: {
+        cout << "Runda : " << runda << endl;
+        Sleep(500);
+        tabelka(postac, enemy);
+        cout << "\n" << postac.imie << " zaczyna !\n" << endl;
+        Sleep(1000);
+        while (postac_win == 0 or enemy_win == 0) {
+            cout << "Walka...";
+            enemy.hp = enemy.hp - postac.sila;
+            cout << postac.imie << " uderzył przeciwnika za " << postac.sila << "pkt !" << endl;
+            cout << "\nAktualna tabelka: \n";
             tabelka(postac, enemy);
-            cout << "\n" << postac.imie << " zaczyna !\n" << endl;
-            Sleep(1000);
-            while (postac_win == 0 or enemy_win == 0) {
-                cout << "Walka...";
-                enemy.hp = enemy.hp - postac.sila;
-                cout << postac.imie << " uderzył przeciwnika za " << postac.sila << "pkt !" << endl;
-                cout << "\nAktualna tabelka: \n";
-                tabelka(postac, enemy);
 
-                if (enemy.hp == 0 and postac.hp > 0) {
-                    cout << postac.imie << " wygrał ! ";
-                    cout << "\nZdobywasz punkt(y) ulepszen";
-                    Sleep(1000);
-                    cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
-                    (void)_getch();
-                    system("cls");
-                    menu(postac, wybor_akcji, klasa_postaci_napis);
-                }
-                if (enemy.hp > 0 and postac.hp == 0) {
-                    koniec_gry();
-                }
-     
-                postac.hp = postac.hp - enemy.sila;
-                Sleep(2500);
-                cout << enemy.imie << " uderzył przeciwnika za " << enemy.sila << " !" << endl;
-                tabelka(postac, enemy);
-                Sleep(2500);
-                
-
-                if (enemy.hp == 0 and postac.hp > 0) {
-                    cout << postac.imie << " wygrał ! ";
-                    cout << "\nZdobywasz punkt(y) ulepszen";
-                    Sleep(1000);
-                    cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
-                    (void)_getch();
-                    system("cls");
-                    menu(postac, wybor_akcji, klasa_postaci_napis);
-                }
-                if (enemy.hp > 0 and postac.hp == 0) {
-                    koniec_gry();
-                }
-
-                else {
-                    cout << "Druga runda !";
-                    runda++;
-                }
+            if (enemy.hp <= 0 and postac.hp > 0) {
+                cout << postac.imie << " wygrał ! ";
+                cout << "\nZdobywasz punkt(y) ulepszen";
+                Sleep(1000);
+                cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
+                (void)_getch();
+                system("cls");
+                menu(postac, wybor_akcji, klasa_postaci_napis);
+            }
+            if (enemy.hp > 0 and postac.hp <= 0) {
+                koniec_gry();
             }
 
-            break;
-        }
-
-        case 2: {
-            cout << "Runda : " << runda << endl;
-            Sleep(500);
+            postac.hp = postac.hp - enemy.sila;
+            Sleep(2500);
+            cout << enemy.imie << " uderzył przeciwnika za " << enemy.sila << " !" << endl;
             tabelka(postac, enemy);
-            cout << "\n" << enemy.imie << " zaczyna !\n" << endl;
-            Sleep(1000);
-            while (postac_win == 0 or enemy_win == 0) {
-                cout << "Walka...";
-                postac.hp = postac.hp - enemy.sila;
-                cout << enemy.imie << " uderzył przeciwnika za " << enemy.sila << "pkt !" << endl;
-                cout << "\nAktualna tabelka: \n";
-                tabelka(postac, enemy);
-
-                if (enemy.hp <= 0 and postac.hp > 0) {
-                    cout << postac.imie << " wygrał ! ";
-                    cout << "\nZdobywasz punkt(y) ulepszen";
-                    Sleep(1000);
-                    cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
-                    (void)_getch();
-                    system("cls");
-                    menu(postac, wybor_akcji, klasa_postaci_napis);
-                }
-                if (enemy.hp > 0 and postac.hp <= 0) {
-                    koniec_gry();
-                }
-
-                enemy.hp = enemy.hp - postac.sila;
-                Sleep(2500);
-                cout << postac.imie << " uderzył przeciwnika za " << postac.sila << " !" << endl;
-                tabelka(postac, enemy);
-                Sleep(2500);
+            Sleep(2500);
 
 
-                if (enemy.hp <= 0 and postac.hp > 0) {
-                    cout << postac.imie << " wygrał ! ";
-                    cout << "\nZdobywasz punkt(y) ulepszen";
-                    Sleep(1000);
-                    cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
-                    (void)_getch();
-                    system("cls");
-                    menu(postac, wybor_akcji, klasa_postaci_napis);
-                }
-                if (enemy.hp > 0 and postac.hp <= 0) {
-                    koniec_gry();
-                }
-
-                else {
-                    cout << "Druga runda !";
-                    runda++;
-                }
+            if (enemy.hp == 0 and postac.hp > 0) {
+                cout << postac.imie << " wygrał ! ";
+                cout << "\nZdobywasz punkt(y) ulepszen";
+                Sleep(1000);
+                cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
+                (void)_getch();
+                system("cls");
+                menu(postac, wybor_akcji, klasa_postaci_napis);
+            }
+            if (enemy.hp > 0 and postac.hp == 0) {
+                koniec_gry();
             }
 
-            break;
+            else {
+                cout << "Druga runda !";
+                runda++;
+            }
         }
+
+        break;
+    }
+
+    case 2: {
+        cout << "Runda : " << runda << endl;
+        Sleep(500);
+        tabelka(postac, enemy);
+        cout << "\n" << enemy.imie << " zaczyna !\n" << endl;
+        Sleep(1000);
+        while (postac_win == 0 or enemy_win == 0) {
+            cout << "Walka...";
+            postac.hp = postac.hp - enemy.sila;
+            cout << enemy.imie << " uderzył przeciwnika za " << enemy.sila << "pkt !" << endl;
+            cout << "\nAktualna tabelka: \n";
+            tabelka(postac, enemy);
+
+            if (enemy.hp <= 0 and postac.hp > 0) {
+                cout << postac.imie << " wygrał ! ";
+                cout << "\nZdobywasz punkt(y) ulepszen";
+                Sleep(1000);
+                cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
+                (void)_getch();
+                system("cls");
+                menu(postac, wybor_akcji, klasa_postaci_napis);
+            }
+            if (enemy.hp > 0 and postac.hp <= 0) {
+                koniec_gry();
+            }
+
+            enemy.hp = enemy.hp - postac.sila;
+            Sleep(2500);
+            cout << postac.imie << " uderzył przeciwnika za " << postac.sila << " !" << endl;
+            tabelka(postac, enemy);
+            Sleep(2500);
+
+
+            if (enemy.hp <= 0 and postac.hp > 0) {
+                cout << postac.imie << " wygrał ! ";
+                cout << "\nZdobywasz punkt(y) ulepszen";
+                Sleep(1000);
+                cout << "\nWcisnij dowolny klawisz by kontynuuowac...";
+                (void)_getch();
+                system("cls");
+                menu(postac, wybor_akcji, klasa_postaci_napis);
+            }
+            if (enemy.hp > 0 and postac.hp <= 0) {
+                koniec_gry();
+            }
+
+            else {
+                cout << "Druga runda !";
+                runda++;
+            }
+        }
+
+        break;
+    }
     }
 
 }
-void przygoda(statystyki_postaci &postac, statystyki_postaci enemy) {
+void przygoda(statystyki_postaci& postac, statystyki_postaci enemy) {
     cout << "\nW " << wybor_drzwi << " drzwiach czai sie : " << endl;
     int wylosowane = rand() % losowych_zdarzen + 1;
     switch (wylosowane) {
@@ -716,14 +716,14 @@ void przygoda(statystyki_postaci &postac, statystyki_postaci enemy) {
 
     }
 }
-void tabelka(statystyki_postaci &postac, statystyki_postaci& enemy) {
+void tabelka(statystyki_postaci& postac, statystyki_postaci& enemy) {
     cout << "\n\t\t\t" << postac.imie << "\tPrzeciwnik:";
     cout << "\n\tSiła" << "\t\t" << postac.sila << "\t\t" << enemy.sila;
     cout << "\n\tŻycie" << "\t\t" << postac.hp << "\t\t" << enemy.hp;
     cout << "\n\tZręczność" << "\t" << postac.zrecznosc << "\t\t" << enemy.zrecznosc;
     cout << "\n\tKryt" << "\t\t" << postac.kryt << "\t\t" << enemy.kryt << endl;
     cout << "\n\tPunkty" << "\t\t" << postac.punkty << "\t\t" << enemy.punkty << endl;
-    liczenie_punktow_postaci(postac, klasa_postaci)
+    liczenie_punktow_postaci(postac, klasa_postaci);
 }
 int koniec_gry() {
     system("cls");
